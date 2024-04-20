@@ -1,0 +1,15 @@
+.app-container{
+  display: flex;
+}
+.content{
+  width: 100%;
+}
+
+.sidebar{
+  min-height: 900px;
+  width: 200px;
+}
+
+.card{
+  display: flex;
+}
