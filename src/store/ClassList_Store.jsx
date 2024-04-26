@@ -1,8 +1,5 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext,useState } from "react";
 import { useReducer } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, firestore } from "../components/firebase"; // Import auth along with firestore
-
 export const ClassList = createContext({
   classlist: [],
   addClass: () => {},
@@ -15,51 +12,35 @@ const classListReducer = (currClassData, action) => {
 
   if (action.type === "ADD_CLASS") {
     newClassData.push(action.payload); // Push the new class to the array
+    dummyClassData.push(action.payload);
   } else if (action.type === "REMOVE_CLASS") {
     newClassData = currClassData.filter(
       (classItem) => classItem.id !== action.payload.id
     );
-  } else if (action.type === "SET_CLASSES") {
-    newClassData = action.payload; // Set the classes fetched from Firestore
+  } else if (action.type === "JOIN_CLASS") {
+    const uniqueClassCode = action.payload.uniqueClassCode;
+    if (!uniqueClassCode) {
+      console.log("Unique class code is empty.");
+      return currClassData; // No need to continue if the unique class code is empty
+    }
+
+    console.log('action.payload.uniqueClassCode', uniqueClassCode);
+    const classToAdd = dummyClassData.find(
+      (classItem) => classItem.uniqueCode === uniqueClassCode
+    );
+
+    console.log("Class to add:", classToAdd);
+    if (classToAdd) {
+      newClassData.push(classToAdd); // Push the joined class to the array
+    }
   }
 
   return newClassData;
-};
+}
 
-const ClassListProvider = ({ children }) => {
-  const [classlist, dispatchClassList] = useReducer(
-    classListReducer,
-    []
-  );
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // User is signed in
-        try {
-          // Fetch joined classes for the logged-in user from Firestore
-          const classesRef = firestore.collection("users").doc(user.uid);
-          const doc = await classesRef.get();
-
-          if (doc.exists) {
-            const userData = doc.data();
-            dispatchClassList({ type: "SET_CLASSES", payload: userData.joinedClasses });
-          } else {
-            console.log("No such document!");
-          }
-        } catch (error) {
-          console.error("Error fetching document:", error);
-        }
-      } else {
-        // No user is signed in
-        dispatchClassList({ type: "SET_CLASSES", payload: [] }); // Clear classes if no user is signed in
-      }
-    });
-
-    return () => unsubscribe(); // Cleanup function to unsubscribe from auth state changes
-  }, []);
-
-  const addClass = (className, uniqueCode) => {
+const ClassListProvider = ({children}) => {
+  const [classlist,dispatchClassList] = useReducer(classListReducer, dummyClassData);
+  const addClass = (className,uniqueCode) =>{
     dispatchClassList({
       type: "ADD_CLASS",
       payload: {
@@ -67,32 +48,52 @@ const ClassListProvider = ({ children }) => {
         className: className,
         uniqueCode: uniqueCode,
       },
-    });
-  };
-
-  const removeClass = () => {
+    })
+  }
+  const removeClass = () =>{
     dispatchClassList({
       type: "REMOVE_CLASS",
       payload: {
         id: Math.random().toString(),
       },
-    });
-  };
-
+    })
+  }
   const joinClass = (uniqueClassCode) => {
     dispatchClassList({
       type: "JOIN_CLASS",
       payload: {
         uniqueClassCode: uniqueClassCode,
       },
-    });
-  };
-
+    })
+  }
   return (
-    <ClassList.Provider value={{ classlist, addClass, removeClass, joinClass }}>
+    <ClassList.Provider value={{classlist, addClass, removeClass, joinClass}}>
       {children}
     </ClassList.Provider>
   );
 };
+
+// dummclass datalike class name and class id
+const dummyClassData = [{
+  id: "1",
+  className: "Math",
+  uniqueCode: "abc",
+},
+{
+  id: "2",
+  className: "Science",
+  uniqueCode: "def",
+},
+{
+  id: "3",
+  className: "History",
+  uniqueCode: "abcks",
+},
+{
+  id: "4",
+  className: "English",
+  uniqueCode: "abcks",
+},
+]
 
 export default ClassListProvider;
