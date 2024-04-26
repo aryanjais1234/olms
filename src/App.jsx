@@ -9,18 +9,18 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ClassRoom from './components/ClassRoom';
 
 function App() {
-
   return (
     <ClassListProvider>
     <div className="app-container">
     <Sidebar></Sidebar>
       <div className="content">
-       <Header />
+       <Header/>
        <div className="classList">
           <ClassList />
        </div>
       </div>
     </div>
+    
     </ClassListProvider>
   )
 }

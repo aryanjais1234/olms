@@ -13,7 +13,10 @@ import TextField from '@mui/material/TextField';
 import { ClassList } from '../store/ClassList_Store';
 import { useContext } from 'react';
 import { useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebase';
+
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -61,6 +64,18 @@ function Header() {
   const handleClose = () => {
     setOpen(false);
   };
+  const [isLoggedIn,setIsLoggedIn]=useState(false);
+  const navigate=useNavigate();
+  const handleLogout= async()=>{
+    try{
+      await signOut(auth);
+      setIsLoggedIn(false);
+      navigate('/Home');
+    }catch(error){
+      console.error("Logout Error:", error);
+    }
+  };
+  
   return (
     <div><header className="p-3 text-bg-dark">
     <div className="container">
@@ -120,9 +135,18 @@ function Header() {
           <input type="text" class="btn btn-outline-light me-2" placeholder="Enter Class Code" aria-label="Recipient's username" aria-describedby="button-addon2"
           ref={joinCodeElement} />
           <button autoFocus className="btn btn-outline-light me-2" onClick={joinClassdata}>Join Class</button>
+
+          {isLoggedIn ? (
+            <>
+            <button onClick={handleLogout}>Logout</button>
+            </>
+          ):(
+            <>
           <Link to="/Login">
-          <button autoFocus type="button" className="btn btn-outline-light me-2">Login</button>
+          <button autoFocus type="button" className="btn btn-outline-light me-2" >Login</button>
           </Link>
+          </>
+          )}
         </div>
       </div>
     </div>
