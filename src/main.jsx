@@ -9,8 +9,6 @@ import ClassRoom from './components/ClassRoom.jsx';
 import Login from './components/Login.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import Header from './components/Header.jsx';
-import ClassList from './components/ClassList.jsx';
-import Register from './components/Register.jsx';
 
 const router = createBrowserRouter([
   {
