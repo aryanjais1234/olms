@@ -5,6 +5,7 @@ import { auth } from '../components/firebase';
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
 import './login.css'; // Import your specific CSS file for this component
 import { Link, useNavigate } from 'react-router-dom';
+import App from '../App';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -21,6 +22,7 @@ function Login() {
       // Fetch joined classes for the user and store them in application state
       fetchJoinedClasses(result.user.uid);
       navigate('/Home');
+      <App/>
     } catch (error) {
       console.error("Email/password login error:", error);
     }

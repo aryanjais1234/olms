@@ -1,0 +1,13 @@
+{
+  "name": "your_project_name",
+  "version": "1.0.0",
+  "description": "Your project description",
+  "main": "app.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongodb": "^4.1.1"
+  }
+}

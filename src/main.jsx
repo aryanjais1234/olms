@@ -9,6 +9,9 @@ import ClassRoom from './components/ClassRoom.jsx';
 import Login from './components/Login.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import Header from './components/Header.jsx';
+import Register from './components/Register.jsx';
+import Demo from './components/Demo.jsx';
+
 
 const router = createBrowserRouter([
   {
@@ -26,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/Demo",
+    element: <Demo />,
   },
   {
     path: '/classroom/:classname',

@@ -1,26 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-function Class({classData}) {
- const classDatatoPass = {
-  classId : classData.id,
-  className : classData.className,
-  uniqueCode : classData.uniqueCode
- };
- console.log(classDatatoPass);
+function Class() {
+  const [classData, setClassData] = useState([]);
+
+  useEffect(() => {
+    // Function to fetch data
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/fetchdata');
+        setClassData(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+};
+fetchData();
+// const interval = setInterval(() => {
+//   fetchData();
+// }, 5000);
+
+// // Clean up interval on unmount
+// return () => clearInterval(interval);
+}, []);
+
   return (
     <div>
-      <div className="card">
-        <div className="card-body">
-          <h5 className="card-title">{classData.className}</h5>
-          <Link to={`/classroom/${classData.uniqueCode}`}
-            state={[classDatatoPass]}
-          >
-            <button className="btn btn-primary">Enter to ClassRoom</button>
-          </Link>
-
+      {classData.map(item => (
+        <div className="card">
+          <div className="card-body">
+            <h5 className="card-title">{item.className}</h5>
+            <Link to={`/classroom/${item.uniqueCode}`} state={[item]}>
+              <button className="btn btn-primary">Enter to ClassRoom</button>
+            </Link>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
